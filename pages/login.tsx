@@ -1,6 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 
 export default function Login() {
+  const supabaseClient = useSupabaseClient();
+  const user = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log(user);
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
+
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: "",
@@ -20,9 +33,14 @@ export default function Login() {
     });
   };
 
-  const handleSubmitLogin = (e) => {
+  const handleSubmitLogin = async (e) => {
     e.preventDefault();
-    console.log(loginInput);
+    const { data, error } = await supabaseClient.auth.signInWithPassword({
+      email: loginInput.email,
+      password: loginInput.password,
+    });
+
+    console.log(data);
   };
 
   return (
