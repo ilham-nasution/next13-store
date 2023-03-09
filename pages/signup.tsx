@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import ErrorAlert from "@/components/ErrorAlert";
 
-export default function Login() {
+export default function Signup() {
   const supabaseClient = useSupabaseClient();
   const user = useUser();
   const router = useRouter();
@@ -39,15 +39,15 @@ export default function Login() {
     });
   };
 
-  const handleSubmitLogin = async (e: React.SyntheticEvent) => {
+  const handleSubmitSignup = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { data, error } = await supabaseClient.auth.signUp({
       email: loginInput.email,
       password: loginInput.password,
     });
 
     if (error) {
-      setError("invalid email or password");
+      setError(error.message);
     }
 
     console.log(data);
@@ -57,9 +57,9 @@ export default function Login() {
     <div className="container mx-auto">
       <div className="h-screen grid place-items-center">
         <div className="card bg-base-100 shadow-xl">
-          <form onSubmit={handleSubmitLogin}>
+          <form onSubmit={handleSubmitSignup}>
             <div className="card-body">
-              <h2 className="card-title justify-center">Login</h2>
+              <h2 className="card-title justify-center">Create an Account</h2>
               {error && <ErrorAlert errorMsg={error} />}
               <div className="form-control w-full max-w-xs">
                 <label className="label">
@@ -85,13 +85,13 @@ export default function Login() {
               </div>
               <div className="card-actions justify-center my-3">
                 <button type="submit" className="btn btn-block btn-primary">
-                  sign in
+                  sign up
                 </button>
               </div>
               <p className="text-center">
-                Don{"'"}t have an account?
-                <Link href="/signup" className="link link-primary ml-1">
-                  Sign up
+                Already have an account?
+                <Link href="/login" className="link link-primary ml-1">
+                  Sign in
                 </Link>
               </p>
             </div>
