@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import ErrorAlert from "@/components/ErrorAlert";
 
 export default function Login() {
   const supabaseClient = useSupabaseClient();
@@ -19,26 +20,34 @@ export default function Login() {
     password: "",
   });
 
-  const handleEmailInput = (e) => {
+  const [error, setError] = useState("");
+
+  const handleEmailInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     setLoginInput({
       ...loginInput,
       email: e.target.value,
     });
   };
 
-  const handlePasswordInput = (e) => {
+  const handlePasswordInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     setLoginInput({
       ...loginInput,
       password: e.target.value,
     });
   };
 
-  const handleSubmitLogin = async (e) => {
+  const handleSubmitLogin = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: loginInput.email,
       password: loginInput.password,
     });
+
+    if (error) {
+      setError("invalid email or password");
+    }
 
     console.log(data);
   };
@@ -51,6 +60,7 @@ export default function Login() {
             <form onSubmit={handleSubmitLogin}>
               <div className="card-body">
                 <h2 className="card-title justify-center">Login</h2>
+                {error && <ErrorAlert errorMsg={error} />}
                 <div className="form-control w-full max-w-xs">
                   <label className="label">
                     <span className="label-text">Email</span>
